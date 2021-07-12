@@ -1,5 +1,6 @@
 # 控制反转
-> [InversionOfControl原文链接](https://martinfowler.com/bliki/InversionOfControl.html)  
+> [InversionOfControl原文链接](https://martinfowler.com/bliki/InversionOfControl.html)   
+ 
 当你扩展框架的时候，控制反转是你经常遇到的现象。它也经常被视为是框架的典型特征。  
 来看一个简单的例子。我正在写个命令行查询程序--获取用户信息，我有时可能这样干：    
 ```ruby
@@ -40,3 +41,11 @@ Tk.mainloop()
 另一种方式是让框架定义事件，让客户端代码订阅这个事件。.net平台是个非常好的例子，它在语言上支持用户在小部件上绑定事件，之后可以使用委托在事件上绑定方法。  
 
 上面两种方法在单例中作用很好，但是有时候你需要在一个单元内结合几个需要的方法调用作为拓展。在这种情况下，框架可以定义接口，客户代码必须实现这些接口完成相关调用。
+
+EJBs 是反转控制风格的一个好的例子。当你开发一个session bean的时候，你可以实现许多方法供EJB容器在不同的生命周期中的节点中调用。举例来说，Session Bean接口定义了ejbRemove，ejbPassivate（存储在二级存储中），ejbActivate（从被动状态恢复）。在这些方法被调用的时候，你可以不必关心谁控制它们，只需要关心它们做了啥。容器调用我门的代码，而不是我门调用它。  
+
+这些都是控制反转的复杂案列，但是其实你可以在简单一点的情景下遇到这种情况。模版方法就是一个好的例子：超类定义好了控制流，子类继承并且覆写方法或者实现虚方法。所以在JUnit中，框架代码调用setUp和tearDown方法为你创建或者销毁你的实例，框架调用你的代码，你的代码做出反应，控制再次反转。  
+
+由于IoC容器的兴起，如今很多人对控制反转的意思反而有些混淆。一些人将一般意义上的准则和某些容器使用的具体风格的控制反转混为一谈（比如依赖注入）。这种情况挺讽刺的，因为IOC容器一般被人看成EJB的竞争对手，但是EJB同样使用了大量的控制反转。  
+
+就我所知，术语*控制反转*第一次出现在Johnson和Foot论文[Designing Reusable Classes](http://www.laputan.org/drc/drc.html)中的点子。这篇论文属于陈年老文但是在15年后仍然值得一读。他们认为他们从别的地方听到了这个术语但是忘记具体在哪里了。这个随后进入面向对象社区并且出现在[Gang of Four](https://www.amazon.com/gp/product/0201633612/ref=as_li_tl?ie=UTF8&camp=1789&creative=9325&creativeASIN=0201633612&linkCode=as2&tag=martinfowlerc-20)这本书中。更有趣的词“好莱坞原则”似乎源自于Richard Sweet的[论文](http://www.digibarn.com/friends/curbow/star/XDEPaper.pdf)中。在一列设计目标中，他写到“Don't call us, we'll call you (Hollywood's Law): A tool should arrange for Tajo to notify it when the user wishes to communicate some event to the tool, rather than adopt an 'ask the user for a command and execute it' model.”。John Vlissides 写了[column for C++ report](http://www.research.ibm.com/designpatterns/pubs/ph-feb96.txt)，其中给了对好莱坞原则的一个好的解释。
